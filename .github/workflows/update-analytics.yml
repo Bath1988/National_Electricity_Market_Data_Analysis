@@ -50,36 +50,24 @@ jobs:
         ls -la App/src/
         cd App/src
         python app.py
+        echo "✅ Analytics completed - files saved directly to docs folder"
         
-    - name: Copy analytics files to docs
+    - name: Verify generated files
       run: |
-        # Ensure analytics files exist before copying
-        ls -la App/Analytics/
-        # Copy analytics files to docs folder for GitHub Pages
-        cp App/Analytics/dual_energy_analysis.png docs/ || echo "Chart file not found"
-        cp App/Analytics/dual_energy_report.txt docs/ || echo "Report file not found"
-        # Verify files were copied
+        echo "Checking docs/ contents:"
         ls -la docs/
+        echo "✅ Verification completed"
         
     - name: Commit and push if changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add App/Data/ App/Analytics/ docs/
+        git add App/Data/ docs/
         git diff --staged --quiet || (git commit -m "Update energy analytics data $(date)" && git push)
-        
-    - name: Update existing index.html with correct paths
-      run: |
-        # Update the existing index.html to use correct image paths for GitHub Pages
-        sed -i 's|src="./dual_energy_analysis.png"|src="./dual_energy_analysis.png"|g' docs/index.html
-        sed -i 's|href="./dual_energy_report.txt"|href="./dual_energy_report.txt"|g' docs/index.html
-        echo "Updated index.html paths"
         
     - name: Deploy to GitHub Pages (Simple)
       run: |
-        # Final verification and commit of docs folder
-        echo "Files in docs folder:"
+        # Final verification of docs folder
+        echo "Files ready for GitHub Pages:"
         ls -la docs/
-        git add docs/
-        git commit -m "Update GitHub Pages content with analytics" || echo "No docs changes to commit"
-        git push
+        echo "✅ Deployment ready"

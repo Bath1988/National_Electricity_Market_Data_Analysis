@@ -577,9 +577,9 @@ def run_dual_analytics(power_data: Dict[str, pd.DataFrame], market_data: Dict[st
     Returns:
         DualMetricAnalytics instance with results
     """
-    # Create analytics directory
-    analytics_dir = '../Analytics'
-    os.makedirs(analytics_dir, exist_ok=True)
+    # Create docs directory for GitHub Pages
+    docs_dir = '../../docs'
+    os.makedirs(docs_dir, exist_ok=True)
     
     # Initialize dual analytics
     dual_analytics = DualMetricAnalytics(power_data, market_data)
@@ -589,16 +589,19 @@ def run_dual_analytics(power_data: Dict[str, pd.DataFrame], market_data: Dict[st
     print(report)
     
     if save_report:
-        # Use fixed filename instead of timestamp
-        report_filename = f"{analytics_dir}/dual_energy_report.txt"
+        # Save to docs folder for GitHub Pages
+        report_filename = f"{docs_dir}/dual_energy_report.txt"
+        
         with open(report_filename, 'w', encoding='utf-8') as f:
             f.write(report)
         print(f"\n📄 Dual report saved to {report_filename}")
     
     if save_plots:
-        # Use fixed filename instead of timestamp
-        plot_filename = f"{analytics_dir}/dual_energy_analysis.png"
+        # Save to docs folder for GitHub Pages
+        plot_filename = f"{docs_dir}/dual_energy_analysis.png"
+        
         dual_analytics.create_dual_visualizations(plot_filename)
+        print(f"📊 Chart saved to {plot_filename}")
     
     return dual_analytics
 
