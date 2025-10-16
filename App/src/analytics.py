@@ -205,73 +205,255 @@ class DualMetricAnalytics:
         plt.show()
     
     def generate_dual_report(self) -> str:
-        """Generate comprehensive report for both metrics"""
+        """Generate comprehensive HTML report for both metrics"""
         power_analytics = EnergyAnalytics(self.power_data)
         market_analytics = EnergyAnalytics(self.market_data)
         
         power_analysis = power_analytics.analyze_all()
         market_analysis = market_analytics.analyze_all()
         
-        report = f"""
-DUAL ENERGY ANALYTICS REPORT
-{'=' * 60}
-Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+        # Generate HTML report
+        html_report = f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual Energy Analytics Report</title>
+    <style>
+        body {{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+            color: #333;
+        }}
+        .container {{
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }}
+        h1 {{
+            color: #2E86AB;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }}
+        .timestamp {{
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-style: italic;
+        }}
+        h2 {{
+            color: #A23B72;
+            border-bottom: 3px solid #A23B72;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }}
+        .metric-info {{
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #2E86AB;
+        }}
+        .dataset-section {{
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }}
+        .dataset-title {{
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 15px;
+        }}
+        .stats-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }}
+        .stat-item {{
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }}
+        .stat-label {{
+            font-weight: bold;
+            color: #6c757d;
+            font-size: 0.9em;
+        }}
+        .stat-value {{
+            font-size: 1.2em;
+            color: #2E86AB;
+            margin-top: 5px;
+        }}
+        .insights-section {{
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 5px solid #ffc107;
+        }}
+        .insights-title {{
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+        }}
+        .insight-item {{
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }}
+        .insight-item:before {{
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #ffc107;
+            font-weight: bold;
+        }}
+        .back-link {{
+            text-align: center;
+            margin-top: 40px;
+        }}
+        .back-link a {{
+            color: #2E86AB;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 20px;
+            border: 2px solid #2E86AB;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }}
+        .back-link a:hover {{
+            background: #2E86AB;
+            color: white;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔌⚡ Dual Energy Analytics Report</h1>
+        <div class="timestamp">Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div>
 
-POWER DATA ANALYSIS
-{'-' * 30}
-Network: {power_analysis['summary']['network']}
-Metric: {power_analysis['summary']['metric']}
-Unit: {power_analysis['summary']['unit']}
+        <h2>🔌 Power Data Analysis</h2>
+        <div class="metric-info">
+            <strong>Network:</strong> {power_analysis['summary']['network']}<br>
+            <strong>Metric:</strong> {power_analysis['summary']['metric']}<br>
+            <strong>Unit:</strong> {power_analysis['summary']['unit']}
+        </div>
 """
-        
+
         # Power datasets summary
         for dataset_key, stats in power_analysis['summary']['datasets'].items():
-            report += f"""
-{dataset_key.upper().replace('_', ' ')}:
-  Records: {stats['records']:,}
-  Period: {stats['date_range']['start'].strftime('%Y-%m-%d')} to {stats['date_range']['end'].strftime('%Y-%m-%d')}
-  Range: {stats['value_stats']['min']:,.0f} - {stats['value_stats']['max']:,.0f} {power_analysis['summary']['unit']}
-  Average: {stats['value_stats']['mean']:,.0f} {power_analysis['summary']['unit']}
+            html_report += f"""
+        <div class="dataset-section">
+            <div class="dataset-title">{dataset_key.upper().replace('_', ' ')}</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">Records</div>
+                    <div class="stat-value">{stats['records']:,}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Period</div>
+                    <div class="stat-value">{stats['date_range']['start'].strftime('%Y-%m-%d')} to {stats['date_range']['end'].strftime('%Y-%m-%d')}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Minimum</div>
+                    <div class="stat-value">{stats['value_stats']['min']:,.0f} {power_analysis['summary']['unit']}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Maximum</div>
+                    <div class="stat-value">{stats['value_stats']['max']:,.0f} {power_analysis['summary']['unit']}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Average</div>
+                    <div class="stat-value">{stats['value_stats']['mean']:,.0f} {power_analysis['summary']['unit']}</div>
+                </div>
+            </div>
+        </div>
 """
-        
+
         # Power insights
         if 'error' not in power_analysis['long_term']:
             lt = power_analysis['long_term']
-            report += f"""
-POWER INSIGHTS:
-• Trend Direction: {lt['trend_direction'].title()}
-• Peak Month: {lt['peak_month']} | Low Month: {lt['low_month']}
+            html_report += f"""
+        <div class="insights-section">
+            <div class="insights-title">💡 Power Insights</div>
+            <div class="insight-item">Trend Direction: {lt['trend_direction'].title()}</div>
+            <div class="insight-item">Peak Month: {lt['peak_month']}</div>
+            <div class="insight-item">Low Month: {lt['low_month']}</div>
+        </div>
 """
-        
-        report += f"""
 
-MARKET VALUE DATA ANALYSIS
-{'-' * 30}
-Network: {market_analysis['summary']['network']}
-Metric: {market_analysis['summary']['metric']}
-Unit: {market_analysis['summary']['unit']}
+        html_report += f"""
+        <h2>💰 Market Value Data Analysis</h2>
+        <div class="metric-info">
+            <strong>Network:</strong> {market_analysis['summary']['network']}<br>
+            <strong>Metric:</strong> {market_analysis['summary']['metric']}<br>
+            <strong>Unit:</strong> {market_analysis['summary']['unit']}
+        </div>
 """
-        
+
         # Market Value datasets summary
         for dataset_key, stats in market_analysis['summary']['datasets'].items():
-            report += f"""
-{dataset_key.upper().replace('_', ' ')}:
-  Records: {stats['records']:,}
-  Period: {stats['date_range']['start'].strftime('%Y-%m-%d')} to {stats['date_range']['end'].strftime('%Y-%m-%d')}
-  Range: {stats['value_stats']['min']:,.2f} - {stats['value_stats']['max']:,.2f} {market_analysis['summary']['unit']}
-  Average: {stats['value_stats']['mean']:,.2f} {market_analysis['summary']['unit']}
+            html_report += f"""
+        <div class="dataset-section">
+            <div class="dataset-title">{dataset_key.upper().replace('_', ' ')}</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">Records</div>
+                    <div class="stat-value">{stats['records']:,}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Period</div>
+                    <div class="stat-value">{stats['date_range']['start'].strftime('%Y-%m-%d')} to {stats['date_range']['end'].strftime('%Y-%m-%d')}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Minimum</div>
+                    <div class="stat-value">${stats['value_stats']['min']:,.2f}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Maximum</div>
+                    <div class="stat-value">${stats['value_stats']['max']:,.2f}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Average</div>
+                    <div class="stat-value">${stats['value_stats']['mean']:,.2f}</div>
+                </div>
+            </div>
+        </div>
 """
-        
+
         # Market Value insights
         if 'error' not in market_analysis['long_term']:
             lt = market_analysis['long_term']
-            report += f"""
-MARKET VALUE INSIGHTS:
-• Trend Direction: {lt['trend_direction'].title()}
-• Peak Month: {lt['peak_month']} | Low Month: {lt['low_month']}
+            html_report += f"""
+        <div class="insights-section">
+            <div class="insights-title">💡 Market Value Insights</div>
+            <div class="insight-item">Trend Direction: {lt['trend_direction'].title()}</div>
+            <div class="insight-item">Peak Month: {lt['peak_month']}</div>
+            <div class="insight-item">Low Month: {lt['low_month']}</div>
+        </div>
+"""
+
+        html_report += """
+        <div class="back-link">
+            <a href="index.html">← Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
 """
         
-        return report
+        return html_report
 
 
 class EnergyAnalytics:
@@ -590,7 +772,7 @@ def run_dual_analytics(power_data: Dict[str, pd.DataFrame], market_data: Dict[st
     
     if save_report:
         # Save to docs folder for GitHub Pages
-        report_filename = f"{docs_dir}/dual_energy_report.txt"
+        report_filename = f"{docs_dir}/dual_energy_report.html"
         
         with open(report_filename, 'w', encoding='utf-8') as f:
             f.write(report)
