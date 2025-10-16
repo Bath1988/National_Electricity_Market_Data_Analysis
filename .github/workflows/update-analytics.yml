@@ -33,12 +33,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         
-    - name: Create credentials file
+    - name: Create credentials file and set environment
       run: |
         pwd
         ls -la
         mkdir -p App
-        echo "API_KEY=${{ secrets.OPENELECTRICITY_API_KEY }}" > App/credentials.txt
+        echo "OPENELECTRICITY_API_KEY=${{ secrets.OPENELECTRICITY_API_KEY }}" > App/credentials.txt
+        echo "API_KEY=${{ secrets.OPENELECTRICITY_API_KEY }}" >> App/credentials.txt
+        
+    - name: Set environment variables
+      run: |
+        echo "OPENELECTRICITY_API_KEY=${{ secrets.OPENELECTRICITY_API_KEY }}" >> $GITHUB_ENV
         
     - name: Run analytics update
       run: |

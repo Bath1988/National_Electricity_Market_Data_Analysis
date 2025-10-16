@@ -14,7 +14,15 @@ import os
 from typing import Dict, Optional
 
 # Load environment variables BEFORE importing openelectricity
-load_dotenv('../credentials.txt')
+# Try multiple credential file locations for different environments
+credential_paths = ['../credentials.txt', '../../App/credentials.txt', './credentials.txt']
+for path in credential_paths:
+    if os.path.exists(path):
+        load_dotenv(path)
+        break
+else:
+    # If no credentials file found, assume environment variables are already set
+    pass
 
 from openelectricity import OEClient
 from openelectricity.types import DataMetric
