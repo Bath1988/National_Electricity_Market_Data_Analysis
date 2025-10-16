@@ -136,11 +136,11 @@ jobs:
         </html>
         EOF
         
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: './docs'
-        
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+    - name: Deploy to GitHub Pages (Simple)
+      run: |
+        # Create docs folder for GitHub Pages
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add docs/
+        git commit -m "Update GitHub Pages content" || echo "No changes to commit"
+        git push

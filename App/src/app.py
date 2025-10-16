@@ -7,6 +7,8 @@ Analyzes both Power and Market Value data with combined visualizations
 from fetch import fetch_power_and_market_data
 from analytics import run_dual_analytics
 
+import sys
+
 def main():
     """Main function for dual analytics"""
     
@@ -17,8 +19,14 @@ def main():
     print("📈 Combined line plot visualizations")
     
     try:
-        # Ask user if they want to proceed
-        confirm = input("\n▶ Run dual analysis? (y/n): ").strip().lower()
+        # Check if running in non-interactive environment (like GitHub Actions)
+        if not sys.stdin.isatty():
+            print("\n🤖 Running in automated mode...")
+            confirm = 'y'
+        else:
+            # Ask user if they want to proceed
+            confirm = input("\n▶ Run dual analysis? (y/n): ").strip().lower()
+        
         if confirm != 'y':
             print("⏹ Cancelled.")
             return
