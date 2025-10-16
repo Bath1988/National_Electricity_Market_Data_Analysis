@@ -38,7 +38,7 @@ class DualMetricAnalytics:
         print("📊 Creating combined visualizations...")
         print("   └─ Generating dual-axis line plots...")
         
-        fig = plt.figure(figsize=(18, 16))  # Increased height further
+        fig = plt.figure(figsize=(20, 18))  # Even larger for better visibility
         fig.suptitle(f'{self.network} - Power vs Market Value Combined Analysis', 
                     fontsize=16, fontweight='bold', y=0.98)  # Adjusted title position
         
