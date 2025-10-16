@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Australian Energy Analytics Dashboard</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 40px; 
+            background: #f5f5f5; 
+            text-align: center;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
+        h1 { color: #2E86AB; margin-bottom: 30px; }
+        .status { color: #A23B72; font-size: 18px; margin: 20px 0; }
+        .note { color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔌 Australian Energy Analytics Dashboard</h1>
+        
+        <div class="status">
+            📊 Dashboard is being set up...
+        </div>
+        
+        <p>Your automated energy analytics dashboard is currently being configured.</p>
+        
+        <p class="note">
+            This page will automatically update with live analytics charts once the GitHub Actions workflow completes successfully.
+        </p>
+        
+        <p class="note">
+            🔄 Check back in a few minutes for the full dashboard with:
+        </p>
+        
+        <ul style="text-align: left; max-width: 400px; margin: 20px auto;">
+            <li>Monthly Power Analytics (24 Months)</li>
+            <li>Monthly Market Value Analytics (24 Months)</li>
+            <li>Hourly Power Analytics (1 Month)</li>
+            <li>Hourly Market Value Analytics (1 Month)</li>
+            <li>5-Minute Power Analytics (1 Week)</li>
+            <li>5-Minute Market Value Analytics (1 Week)</li>
+        </ul>
+        
+        <p class="note">
+            📅 Last updated: <span id="timestamp"></span>
+        </p>
+    </div>
+    
+    <script>
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+    </script>
+</body>
+</html>
