@@ -6,36 +6,44 @@
     <title>Australian Energy Analytics Dashboard</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         h1 { color: #2E86AB; text-align: center; margin-bottom: 30px; }
-        .analytics-content { text-align: center; }
-        .analytics-item { margin-bottom: 30px; }
+        .analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+        .analytics-item { text-align: center; }
+        .analytics-item img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; }
         .analytics-item h3 { color: #A23B72; margin: 15px 0 10px 0; }
-        .report-section { background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #2E86AB; }
-        .report-section h3 { color: #2E86AB; margin-top: 0; }
-        .report-section p { margin: 10px 0; }
-        .report-section a { color: #A23B72; text-decoration: none; font-weight: bold; }
-        .report-section a:hover { text-decoration: underline; }
         .last-updated { text-align: center; color: #666; font-style: italic; margin-top: 20px; }
+        @media (max-width: 768px) { .analytics-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🔌 Australian Energy Analytics Dashboard</h1>
         
-        <div class="analytics-content">
+        <div class="analytics-grid">
             <div class="analytics-item">
-                <h3>🔌 Australian Energy Market Analytics</h3>
-                <p>Comprehensive dual-metric analysis combining Power Generation and Market Value data</p>
-                <img src="../App/Analytics/dual_energy_analysis.png" alt="Dual Energy Analytics Dashboard" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; margin: 20px 0;" />
+                <h3>Monthly Power Analytics (24 Months)</h3>
+                <img src="../App/Analytics/monthly_power_analytics.png" alt="Monthly Power Analytics" />
             </div>
-            
-            <div class="report-section" style="margin-top: 30px; text-align: left;">
-                <h3>📊 Analytics Summary</h3>
-                <p>📈 <strong>Monthly Trends:</strong> 24 months of power generation vs market value correlation</p>
-                <p>⏰ <strong>Hourly Patterns:</strong> Past 30 days demand and pricing relationships</p> 
-                <p>⚡ <strong>Real-time Data:</strong> 5-minute intervals for past 7 days market dynamics</p>
-                <p>📄 <strong>Detailed Report:</strong> <a href="../App/Analytics/dual_energy_report.txt" target="_blank">View Full Analysis Report</a></p>
+            <div class="analytics-item">
+                <h3>Monthly Market Value Analytics (24 Months)</h3>
+                <img src="../App/Analytics/monthly_market_analytics.png" alt="Monthly Market Value Analytics" />
+            </div>
+            <div class="analytics-item">
+                <h3>Hourly Power Analytics (1 Month)</h3>
+                <img src="../App/Analytics/hourly_power_analytics.png" alt="Hourly Power Analytics" />
+            </div>
+            <div class="analytics-item">
+                <h3>Hourly Market Value Analytics (1 Month)</h3>
+                <img src="../App/Analytics/hourly_market_analytics.png" alt="Hourly Market Value Analytics" />
+            </div>
+            <div class="analytics-item">
+                <h3>5-Minute Power Analytics (1 Week)</h3>
+                <img src="../App/Analytics/fiveminute_power_analytics.png" alt="5-Minute Power Analytics" />
+            </div>
+            <div class="analytics-item">
+                <h3>5-Minute Market Value Analytics (1 Week)</h3>
+                <img src="../App/Analytics/fiveminute_market_analytics.png" alt="5-Minute Market Value Analytics" />
             </div>
         </div>
         
