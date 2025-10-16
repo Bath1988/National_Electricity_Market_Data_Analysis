@@ -1,0 +1,138 @@
+name: Update Energy Analytics
+
+on:
+  schedule:
+    # Run daily at 6 AM UTC (adjust timezone as needed)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual trigger
+  push:
+    branches: [ main ]
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Create credentials file
+      run: |
+        mkdir -p App
+        echo "API_KEY=${{ secrets.OPENELECTRICITY_API_KEY }}" > App/credentials.txt
+        
+    - name: Run analytics update
+      run: |
+        cd App/src
+        python app.py
+        
+    - name: Commit and push if changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add App/Data/ App/Analytics/
+        git diff --staged --quiet || (git commit -m "Update energy analytics data $(date)" && git push)
+        
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+      
+    - name: Create index.html for GitHub Pages
+      run: |
+        mkdir -p docs
+        cat > docs/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Australian Energy Analytics Dashboard</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+                .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                h1 { color: #2E86AB; text-align: center; margin-bottom: 30px; }
+                .analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+                .analytics-item { text-align: center; }
+                .analytics-item img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; }
+                .analytics-item h3 { color: #A23B72; margin: 15px 0 10px 0; }
+                .last-updated { text-align: center; color: #666; font-style: italic; margin-top: 20px; }
+                @media (max-width: 768px) { .analytics-grid { grid-template-columns: 1fr; } }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>🔌 Australian Energy Analytics Dashboard</h1>
+                
+                <div class="analytics-grid">
+                    <div class="analytics-item">
+                        <h3>Monthly Power Analytics (24 Months)</h3>
+                        <img src="../App/Analytics/monthly_power_analytics.png" alt="Monthly Power Analytics" />
+                    </div>
+                    <div class="analytics-item">
+                        <h3>Monthly Market Value Analytics (24 Months)</h3>
+                        <img src="../App/Analytics/monthly_market_analytics.png" alt="Monthly Market Value Analytics" />
+                    </div>
+                    <div class="analytics-item">
+                        <h3>Hourly Power Analytics (1 Month)</h3>
+                        <img src="../App/Analytics/hourly_power_analytics.png" alt="Hourly Power Analytics" />
+                    </div>
+                    <div class="analytics-item">
+                        <h3>Hourly Market Value Analytics (1 Month)</h3>
+                        <img src="../App/Analytics/hourly_market_analytics.png" alt="Hourly Market Value Analytics" />
+                    </div>
+                    <div class="analytics-item">
+                        <h3>5-Minute Power Analytics (1 Week)</h3>
+                        <img src="../App/Analytics/fiveminute_power_analytics.png" alt="5-Minute Power Analytics" />
+                    </div>
+                    <div class="analytics-item">
+                        <h3>5-Minute Market Value Analytics (1 Week)</h3>
+                        <img src="../App/Analytics/fiveminute_market_analytics.png" alt="5-Minute Market Value Analytics" />
+                    </div>
+                </div>
+                
+                <div class="last-updated">
+                    <p>📊 Dashboard automatically updates daily via GitHub Actions</p>
+                    <p>🔄 Last updated: <span id="lastUpdate"></span></p>
+                </div>
+            </div>
+            
+            <script>
+                // Show last commit date as update time
+                fetch('https://api.github.com/repos/YOUR_USERNAME/australian-energy-analytics/commits/main')
+                    .then(response => response.json())
+                    .then(data => {
+                        const date = new Date(data.commit.committer.date);
+                        document.getElementById('lastUpdate').textContent = date.toLocaleString();
+                    })
+                    .catch(() => {
+                        document.getElementById('lastUpdate').textContent = 'Check GitHub for latest updates';
+                    });
+            </script>
+        </body>
+        </html>
+        EOF
+        
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: './docs'
+        
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
