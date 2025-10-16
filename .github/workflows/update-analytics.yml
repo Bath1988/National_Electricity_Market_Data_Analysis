@@ -135,6 +135,9 @@ jobs:
         
     - name: Deploy to GitHub Pages (Simple)
       run: |
+        # Copy analytics files to docs folder for GitHub Pages
+        cp App/Analytics/dual_energy_analysis.png docs/
+        cp App/Analytics/dual_energy_report.txt docs/
         # Create docs folder for GitHub Pages
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
