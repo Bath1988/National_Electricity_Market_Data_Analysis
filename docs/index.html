@@ -47,14 +47,14 @@
     
     <script>
         // Show last commit date as update time
-        fetch('https://api.github.com/repos/YOUR_USERNAME/australian-energy-analytics/commits/main')
+        fetch('https://api.github.com/repos/Bath1988/National_Electricity_Market_Data_Analysis/commits/main')
             .then(response => response.json())
             .then(data => {
                 const date = new Date(data.commit.committer.date);
                 document.getElementById('lastUpdate').textContent = date.toLocaleString();
             })
             .catch(() => {
-                document.getElementById('lastUpdate').textContent = 'Check GitHub for latest updates';
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleString();
             });
     </script>
 </body>

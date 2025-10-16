@@ -51,96 +51,35 @@ jobs:
         cd App/src
         python app.py
         
+    - name: Copy analytics files to docs
+      run: |
+        # Ensure analytics files exist before copying
+        ls -la App/Analytics/
+        # Copy analytics files to docs folder for GitHub Pages
+        cp App/Analytics/dual_energy_analysis.png docs/ || echo "Chart file not found"
+        cp App/Analytics/dual_energy_report.txt docs/ || echo "Report file not found"
+        # Verify files were copied
+        ls -la docs/
+        
     - name: Commit and push if changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add App/Data/ App/Analytics/
+        git add App/Data/ App/Analytics/ docs/
         git diff --staged --quiet || (git commit -m "Update energy analytics data $(date)" && git push)
         
-    - name: Create index.html for GitHub Pages
+    - name: Update existing index.html with correct paths
       run: |
-        mkdir -p docs
-        cat > docs/index.html << 'EOF'
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Australian Energy Analytics Dashboard</title>
-            <style>
-                body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
-                .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-                h1 { color: #2E86AB; text-align: center; margin-bottom: 30px; }
-                .analytics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
-                .analytics-item { text-align: center; }
-                .analytics-item img { max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; }
-                .analytics-item h3 { color: #A23B72; margin: 15px 0 10px 0; }
-                .last-updated { text-align: center; color: #666; font-style: italic; margin-top: 20px; }
-                @media (max-width: 768px) { .analytics-grid { grid-template-columns: 1fr; } }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <h1>🔌 Australian Energy Analytics Dashboard</h1>
-                
-                <div class="analytics-grid">
-                    <div class="analytics-item">
-                        <h3>Monthly Power Analytics (24 Months)</h3>
-                        <img src="../App/Analytics/monthly_power_analytics.png" alt="Monthly Power Analytics" />
-                    </div>
-                    <div class="analytics-item">
-                        <h3>Monthly Market Value Analytics (24 Months)</h3>
-                        <img src="../App/Analytics/monthly_market_analytics.png" alt="Monthly Market Value Analytics" />
-                    </div>
-                    <div class="analytics-item">
-                        <h3>Hourly Power Analytics (1 Month)</h3>
-                        <img src="../App/Analytics/hourly_power_analytics.png" alt="Hourly Power Analytics" />
-                    </div>
-                    <div class="analytics-item">
-                        <h3>Hourly Market Value Analytics (1 Month)</h3>
-                        <img src="../App/Analytics/hourly_market_analytics.png" alt="Hourly Market Value Analytics" />
-                    </div>
-                    <div class="analytics-item">
-                        <h3>5-Minute Power Analytics (1 Week)</h3>
-                        <img src="../App/Analytics/fiveminute_power_analytics.png" alt="5-Minute Power Analytics" />
-                    </div>
-                    <div class="analytics-item">
-                        <h3>5-Minute Market Value Analytics (1 Week)</h3>
-                        <img src="../App/Analytics/fiveminute_market_analytics.png" alt="5-Minute Market Value Analytics" />
-                    </div>
-                </div>
-                
-                <div class="last-updated">
-                    <p>📊 Dashboard automatically updates daily via GitHub Actions</p>
-                    <p>🔄 Last updated: <span id="lastUpdate"></span></p>
-                </div>
-            </div>
-            
-            <script>
-                // Show last commit date as update time
-                fetch('https://api.github.com/repos/YOUR_USERNAME/australian-energy-analytics/commits/main')
-                    .then(response => response.json())
-                    .then(data => {
-                        const date = new Date(data.commit.committer.date);
-                        document.getElementById('lastUpdate').textContent = date.toLocaleString();
-                    })
-                    .catch(() => {
-                        document.getElementById('lastUpdate').textContent = 'Check GitHub for latest updates';
-                    });
-            </script>
-        </body>
-        </html>
-        EOF
+        # Update the existing index.html to use correct image paths for GitHub Pages
+        sed -i 's|src="./dual_energy_analysis.png"|src="./dual_energy_analysis.png"|g' docs/index.html
+        sed -i 's|href="./dual_energy_report.txt"|href="./dual_energy_report.txt"|g' docs/index.html
+        echo "Updated index.html paths"
         
     - name: Deploy to GitHub Pages (Simple)
       run: |
-        # Copy analytics files to docs folder for GitHub Pages
-        cp App/Analytics/dual_energy_analysis.png docs/
-        cp App/Analytics/dual_energy_report.txt docs/
-        # Create docs folder for GitHub Pages
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        # Final verification and commit of docs folder
+        echo "Files in docs folder:"
+        ls -la docs/
         git add docs/
-        git commit -m "Update GitHub Pages content" || echo "No changes to commit"
+        git commit -m "Update GitHub Pages content with analytics" || echo "No docs changes to commit"
         git push
