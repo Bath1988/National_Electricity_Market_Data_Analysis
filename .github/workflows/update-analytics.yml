@@ -2,8 +2,8 @@ name: Update Energy Analytics
 
 on:
   schedule:
-    # Run daily at 3:45 AM UTC (avoid peak hours)
-    - cron: '45 3 * * *'
+    # Run daily at 5:45 AM UTC (avoid peak hours)
+    - cron: '45 5 * * *'
   workflow_dispatch:  # Allow manual trigger
   push:
     branches: [ main ]
