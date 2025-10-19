@@ -86,6 +86,9 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         
+        # Pull any remote changes first
+        git pull origin main --rebase || echo "No remote changes to pull"
+        
         # Add files and directories that exist
         [ -d "App/Data" ] && git add App/Data/ || echo "App/Data/ not found"
         [ -d "docs" ] && git add docs/ || echo "docs/ not found"
@@ -94,7 +97,7 @@ jobs:
           echo "📝 No changes to commit"
         else
           git commit -m "🤖 Auto-update: Energy analytics $(date '+%Y-%m-%d %H:%M:%S UTC')"
-          git push
+          git push origin main
           echo "✅ Changes committed and pushed"
         fi
 
