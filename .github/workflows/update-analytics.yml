@@ -2,8 +2,8 @@ name: Update Energy Analytics
 
 on:
   schedule:
-    # Run daily at 6 AM UTC (adjust timezone as needed)
-    - cron: '0 6 * * *'
+    # Run daily at 1:30 AM UTC
+    - cron: '30 1 * * *'
   workflow_dispatch: # Allow manual trigger
   push:
     branches: [ main ]
@@ -33,24 +33,45 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         
-    - name: Create credentials file and set environment
+    - name: Create necessary directories and credentials
       run: |
         pwd
         ls -la
-        mkdir -p App
+        # Create required directories
+        mkdir -p App/Data
+        mkdir -p docs
+        # Create credentials file
         echo "OPENELECTRICITY_API_KEY=${{ secrets.OPENELECTRICITY_API_KEY }}" > App/credentials.txt
         echo "API_KEY=${{ secrets.OPENELECTRICITY_API_KEY }}" >> App/credentials.txt
+        echo "📁 Directory structure created"
         
-    - name: Set environment variables
+    - name: Set environment variables and verify API key
       run: |
         echo "OPENELECTRICITY_API_KEY=${{ secrets.OPENELECTRICITY_API_KEY }}" >> $GITHUB_ENV
+        echo "GITHUB_ACTIONS=true" >> $GITHUB_ENV
+        echo "🔑 API key verification:"
+        if [ -n "${{ secrets.OPENELECTRICITY_API_KEY }}" ]; then
+          echo "✅ API key secret is available"
+        else
+          echo "❌ API key secret is missing"
+        fi
         
     - name: Run analytics update
+      env:
+        OPENELECTRICITY_API_KEY: ${{ secrets.OPENELECTRICITY_API_KEY }}
       run: |
-        ls -la App/src/
+        echo "🔍 Checking App/src/ contents:"
+        ls -la App/src/ || echo "App/src/ not found"
+        echo "🔍 Current directory contents:"
+        ls -la
+        echo "🔍 Environment check:"
+        echo "API key is set: $(if [ -n "$OPENELECTRICITY_API_KEY" ]; then echo 'YES'; else echo 'NO'; fi)"
+        echo "🚀 Running energy analytics..."
         cd App/src
         python app.py
-        echo "✅ Analytics completed - files saved directly to docs folder"
+        echo "✅ Analytics completed - checking output..."
+        cd ../../
+        ls -la docs/ || echo "❌ docs/ folder not found after execution"
         
     - name: Verify generated files
       run: |
@@ -62,8 +83,24 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add App/Data/ docs/
-        git diff --staged --quiet || (git commit -m "Update energy analytics data $(date)" && git push)
+        
+        # Check what files exist
+        echo "📂 Files before git add:"
+        ls -la App/Data/ || echo "No App/Data/"
+        ls -la docs/ || echo "No docs/"
+        
+        # Add files that exist
+        git add -A
+        
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          echo "📝 Committing changes..."
+          git commit -m "🔄 Update energy analytics data and dashboard - $(date '+%Y-%m-%d %H:%M UTC')"
+          git push
+          echo "✅ Changes pushed successfully"
+        fi
         
     - name: Deploy to GitHub Pages (Simple)
       run: |

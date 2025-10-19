@@ -5,6 +5,7 @@ Analyzes both Power and Market Value data with combined visualizations
 """
 
 import sys
+import os
 from fetch import fetch_power_and_market_data
 from plots import generate_energy_plots
 from report_generator import generate_energy_report
@@ -29,8 +30,13 @@ def main():
         
         print(f"\n{ConsoleMessages.STATUS['fetching_data']}")
         
+        # Force fresh data in automated environments (GitHub Actions)
+        use_cache = not bool(os.getenv('GITHUB_ACTIONS', False))
+        if not use_cache:
+            print("🔄 Running in CI/CD - forcing fresh data fetch")
+        
         # Fetch both power and market value data
-        all_data = fetch_power_and_market_data(Config.DEFAULT_NETWORK, use_cache=True)
+        all_data = fetch_power_and_market_data(Config.DEFAULT_NETWORK, use_cache=use_cache)
         power_data = all_data.get('power', {})
         market_data = all_data.get('market_value', {})
         
