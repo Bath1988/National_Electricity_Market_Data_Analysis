@@ -3,7 +3,7 @@ name: Update Energy Analytics
 on:
   schedule:
     # Run daily at 2:30 AM UTC
-    - cron: '30 2 * * *'
+    - cron: '35 2 * * *'
   workflow_dispatch:  # Allow manual trigger
   push:
     branches: [ main ]
@@ -85,7 +85,11 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add App/Data/ App/Analytics/ docs/
+        
+        # Add files and directories that exist
+        [ -d "App/Data" ] && git add App/Data/ || echo "App/Data/ not found"
+        [ -d "docs" ] && git add docs/ || echo "docs/ not found"
+        
         if git diff --staged --quiet; then
           echo "📝 No changes to commit"
         else
