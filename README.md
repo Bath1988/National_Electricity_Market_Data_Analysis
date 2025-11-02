@@ -83,6 +83,85 @@ australian-energy-analytics/
 └── README.md              # Project documentation
 ```
 
+## 🗺️ Architecture Diagram
+
+```
+   ┌────────────────────────────┐
+   │  OpenElectricity API/AEMO │
+   └────────────┬───────────────┘
+           │
+         [fetch.py]
+           │
+   ┌────────────▼────────────┐
+   │   App/Data/ (cache)     │
+   └────────────┬────────────┘
+           │
+   ┌────────────▼────────────┐
+   │  Analytics & Plots      │
+   │ (analytics.py, plots.py)│
+   └────────────┬────────────┘
+           │
+   ┌────────────▼────────────┐
+   │ Report Generator        │
+   │ (report_generator.py)   │
+   └────────────┬────────────┘
+           │
+   ┌────────────▼────────────┐
+   │   docs/ (output)        │
+   └────────────┬────────────┘
+           │
+   ┌────────────▼────────────┐
+   │   index.html (Dashboard)│
+   └────────────┬────────────┘
+           │
+   ┌────────────▼────────────┐
+   │ GitHub Actions Workflow │
+   │  (automation & deploy)  │
+   └─────────────────────────┘
+```
+
+## 🏗️ Project Architecture
+
+The application is organized into modular components for clarity, maintainability, and automation:
+
+**1. Data Fetching (`fetch.py`)**
+   - Handles all API communication with OpenElectricity (AEMO data)
+   - Downloads and caches power and market value datasets in `App/Data/`
+   - Smart caching: avoids redundant API calls if data is fresh
+
+**2. Analytics & Visualization (`plots.py`, `analytics.py`)**
+   - Processes raw data into combined and comparative analytics
+   - Generates 4 key visualizations (monthly, daily, hourly, real-time)
+   - Saves all charts as PNGs in the `docs/` folder for dashboard use
+
+**3. Report Generation (`report_generator.py`)**
+   - Produces a dynamic HTML analytics report (`dual_energy_report.html`)
+   - Summarizes statistics, trends, and insights for both power and market data
+   - Output is saved in `docs/` for web access
+
+**4. Main Application (`app.py`)**
+   - Orchestrates the workflow: fetch → analyze → plot → report
+   - Detects if running in CI/CD (GitHub Actions) to force fresh data
+   - Entry point for both local and automated runs
+
+**5. Automation (GitHub Actions Workflow)**
+   - `.github/workflows/update-analytics.yml` schedules daily runs (cron) and on push
+   - Runs the full pipeline, commits new results, and deploys to GitHub Pages
+
+**6. Dashboard (`docs/` folder)**
+   - Contains all generated charts, reports, and the main `index.html` dashboard
+   - Served automatically via GitHub Pages for public access
+
+**Data Flow:**
+
+1. **Fetch:** `fetch.py` downloads and caches data in `App/Data/`
+2. **Analyze & Plot:** `plots.py` and `analytics.py` process data and generate PNG charts in `docs/`
+3. **Report:** `report_generator.py` creates an HTML report in `docs/`
+4. **Dashboard:** All outputs are linked in `docs/index.html` for easy viewing
+5. **Automation:** GitHub Actions runs the above steps daily, updating the dashboard and reports automatically
+
+This modular architecture ensures the project is easy to maintain, extend, and automate for reliable daily analytics updates.
+
 ## 🔧 Technical Details
 
 ### Dependencies
