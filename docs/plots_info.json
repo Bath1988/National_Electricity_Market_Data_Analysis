@@ -21,11 +21,7 @@
       "description": "Average power consumption and market values for each hour of the day, revealing typical daily demand curves and pricing patterns."
     }
   ],
-<<<<<<< HEAD
-  "generated_at": "2025-11-02T17:15:43.235622",
-=======
-  "generated_at": "2025-11-02T05:46:28.786517",
->>>>>>> 3d08073b14cd1a72d3ac98be857a395ec5603ba8
+  "generated_at": "2025-11-02T06:48:43.667728",
   "network": "NEM",
   "total_plots": 4
 }
