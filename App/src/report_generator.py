@@ -135,14 +135,28 @@ class EnergyReportGenerator:
         return section
     
     def _build_insights_section(self, section_title: str, trends: Dict) -> str:
-        """Build insights section with trend analysis"""
+        """Build insights section with trend analysis in grid format"""
         return f"""
         <div class="insights-section">
             <div class="insights-title">💡 {section_title} Insights</div>
-            <div class="insight-item">Trend Direction: {trends.get('trend_direction', 'Unknown').title()}</div>
-            <div class="insight-item">Peak Month: {trends.get('peak_month', 'Unknown')}</div>
-            <div class="insight-item">Low Month: {trends.get('low_month', 'Unknown')}</div>
-            <div class="insight-item">Volatility Index: {trends.get('volatility', 0):.3f}</div>
+            <div class="insights-grid">
+                <div class="insight-item">
+                    <div class="insight-label">Trend Direction</div>
+                    <div class="insight-value">{trends.get('trend_direction', 'Unknown').title()}</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">Peak Month</div>
+                    <div class="insight-value">{trends.get('peak_month', 'Unknown')}</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">Low Month</div>
+                    <div class="insight-value">{trends.get('low_month', 'Unknown')}</div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-label">Volatility Index</div>
+                    <div class="insight-value">{trends.get('volatility', 0):.3f}</div>
+                </div>
+            </div>
         </div>"""
     
     def _get_css_styles(self) -> str:
@@ -154,12 +168,13 @@ class EnergyReportGenerator:
         return f"""<style>
         body {{
             font-family: {fonts['main']};
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
             background: linear-gradient(135deg, {colors['gradient_start']} 0%, {colors['gradient_end']} 100%);
             color: #333;
             min-height: 100vh;
+            line-height: 1.6;
         }}
         .container {{
             background: white;
@@ -193,81 +208,91 @@ class EnergyReportGenerator:
         }}
         .metric-info {{
             background: linear-gradient(135deg, #e8f4f8 0%, #f0f8ff 100%);
-            padding: 20px;
-            border-radius: 10px;
-            margin: {spacing['item_gap']} 0;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
             border-left: 5px solid {colors['primary']};
-            font-size: 1.1em;
+            font-size: 1.05em;
         }}
         .dataset-section {{
-            margin: {spacing['section_margin']} 0;
-            padding: 25px;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            margin: 30px 0;
+            background: #f8f9fa;
             border-radius: 12px;
-            border-left: 4px solid {colors['success']};
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }}
         .dataset-title {{
-            font-size: 1.4em;
-            font-weight: bold;
-            color: #495057;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 1.3em;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, {colors['primary']} 0%, {colors['secondary']} 100%);
+            padding: 15px 25px;
+            margin: 0;
         }}
-        .stats-grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: {spacing['item_gap']};
-            margin: {spacing['item_gap']} 0;
-        }}
-        .stat-item {{
+        .stats-table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s ease;
         }}
-        .stat-item:hover {{ transform: translateY(-2px); }}
-        .stat-label {{
-            font-weight: bold;
-            color: #6c757d;
+        .stats-table tr {{
+            border-bottom: 1px solid #e9ecef;
+        }}
+        .stats-table tr:last-child {{
+            border-bottom: none;
+        }}
+        .stats-table td {{
+            padding: 15px 25px;
+            font-size: 1.05em;
+        }}
+        .stats-table td:first-child {{
+            font-weight: 600;
+            color: #495057;
+            width: 35%;
+            background: #f8f9fa;
+        }}
+        .stats-table td:last-child {{
+            color: {colors['primary']};
+            font-weight: 500;
+        }}
+        .insights-section {{
+            background: linear-gradient(135deg, #fff9e6 0%, #ffeaa7 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border-left: 5px solid {colors['warning']};
+        }}
+        .insights-title {{
+            font-weight: 700;
+            color: {colors['warning_text']};
+            margin: 0 0 15px 0;
+            font-size: 1.3em;
+        }}
+        .insights-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }}
+        .insight-item {{
+            background: white;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 1em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }}
+        .insight-label {{
+            font-weight: 600;
+            color: #856404;
             font-size: 0.9em;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }}
-        .stat-value {{
-            font-size: 1.3em;
-            color: {colors['primary']};
-            margin-top: 8px;
-            font-weight: 600;
-        }}
-        .insights-section {{
-            background: linear-gradient(135deg, {colors['warning_bg']} 0%, #ffeaa7 100%);
-            padding: 25px;
-            border-radius: 10px;
-            margin: 25px 0;
-            border-left: 5px solid {colors['warning']};
-        }}
-        .insights-title {{
-            font-weight: bold;
-            color: {colors['warning_text']};
-            margin-bottom: 15px;
-            font-size: 1.2em;
-        }}
-        .insight-item {{
-            margin: 10px 0;
-            padding-left: 25px;
-            position: relative;
-            font-size: 1.05em;
-        }}
-        .insight-item:before {{
-            content: "→";
-            position: absolute;
-            left: 0;
-            color: {colors['warning']};
-            font-weight: bold;
-            font-size: 1.2em;
+        .insight-value {{
+            color: #495057;
+            margin-top: 4px;
+            font-size: 1.1em;
         }}
         .technical-report-link {{ 
             text-align: center; 
@@ -288,28 +313,8 @@ class EnergyReportGenerator:
     </style>"""
     
     def _build_dataset_section(self, dataset_key: str, stats: Dict, unit_suffix: str) -> str:
-        """Build a dataset section with formatted statistics"""
+        """Build a dataset section with formatted statistics in table format"""
         dataset_display = FormatUtils.get_dataset_display_name(dataset_key)
-        
-        section = f"""
-        <div class="dataset-section">
-            <div class="dataset-title">{dataset_display}</div>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-label">Records</div>
-                    <div class="stat-value">{stats['count']:,}</div>
-                </div>"""
-        
-        # Add date range if available
-        if stats.get('date_range'):
-            start_date = stats['date_range']['start']
-            end_date = stats['date_range']['end']
-            date_range = FormatUtils.format_date_range(start_date, end_date)
-            section += f"""
-                <div class="stat-item">
-                    <div class="stat-label">Period</div>
-                    <div class="stat-value">{date_range}</div>
-                </div>"""
         
         # Format values based on unit type
         if unit_suffix == 'AUD':
@@ -323,24 +328,43 @@ class EnergyReportGenerator:
             avg_val = FormatUtils.format_power(stats['mean'])
             std_val = FormatUtils.format_power(stats['std'])
         
-        section += f"""
-                <div class="stat-item">
-                    <div class="stat-label">Minimum</div>
-                    <div class="stat-value">{min_val}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Maximum</div>
-                    <div class="stat-value">{max_val}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Average</div>
-                    <div class="stat-value">{avg_val}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">Std Deviation</div>
-                    <div class="stat-value">{std_val}</div>
-                </div>
-            </div>
+        # Build date range if available
+        date_range_row = ""
+        if stats.get('date_range'):
+            start_date = stats['date_range']['start']
+            end_date = stats['date_range']['end']
+            date_range = FormatUtils.format_date_range(start_date, end_date)
+            date_range_row = f"""
+                <tr>
+                    <td>Time Period</td>
+                    <td>{date_range}</td>
+                </tr>"""
+        
+        section = f"""
+        <div class="dataset-section">
+            <div class="dataset-title">{dataset_display}</div>
+            <table class="stats-table">
+                <tr>
+                    <td>Total Records</td>
+                    <td>{stats['count']:,}</td>
+                </tr>{date_range_row}
+                <tr>
+                    <td>Minimum Value</td>
+                    <td>{min_val}</td>
+                </tr>
+                <tr>
+                    <td>Maximum Value</td>
+                    <td>{max_val}</td>
+                </tr>
+                <tr>
+                    <td>Average Value</td>
+                    <td>{avg_val}</td>
+                </tr>
+                <tr>
+                    <td>Standard Deviation</td>
+                    <td>{std_val}</td>
+                </tr>
+            </table>
         </div>"""
         
         return section
